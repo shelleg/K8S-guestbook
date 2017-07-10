@@ -13,20 +13,15 @@ node ('master') {
       checkout scm
       gitcommit_email = sh_out('git --no-pager show -s --format=\'%ae\'')
       currentBuild.displayName = "#${BUILD_NUMBER} ${gitcommit_email}"
-      sh_out('''
-      curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      sh_out("""
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/\$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
       chmod +x ./kubectl
-      ${HOME}/.local/bin/aws s3 cp s3://k8s-hub-tikal-io/hub.tikal.io/kconfig .
-      ''')
+      \${HOME}/.local/bin/aws s3 cp s3://k8s-hub-tikal-io/hub.tikal.io/kconfig .
+      """)
     }
     stage ('Deploy to K8S') {
-			cmd = """
-					\$(find \$(pwd) -type f -name "*-deployment.yaml" | xargs #-I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)
-			"""
-			appNamesa = sh(returnStdout: true, script: cmd)
-      /*sh_out("""
+      sh_out("""
       appNames=\$(find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)
-			print "appnames: $appNames"
       for appName in \${appNames};
       do
         ./kubectl apply -f \${appName}-service.yaml --kubeconfig=\$(pwd)/kconfig
@@ -37,11 +32,11 @@ node ('master') {
         done
         echo "Service Available: \${appName}"
       done
-      """)*/
+      """)
       sh(script: """
       #!/bin/bash
       find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty kubectl apply -f {} --kubeconfig=\$(pwd)/kconfig;
-      """)*/
+      """)
     }
-  
+  }
 }
