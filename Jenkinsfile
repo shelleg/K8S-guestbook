@@ -25,7 +25,7 @@ node ('master') {
 			"""
 			appNamesa = sh(returnStdout: true, script: cmd)
       /*sh_out("""
-      appNames=\$(find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)*/
+      appNames=\$(find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)
 			print "appnames: $appNames"
       for appName in \${appNames};
       do
@@ -37,11 +37,11 @@ node ('master') {
         done
         echo "Service Available: \${appName}"
       done
-      """)
+      """)*/
       sh(script: """
       #!/bin/bash
       find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty kubectl apply -f {} --kubeconfig=\$(pwd)/kconfig;
-      """)
+      """)*/
     }
   }
 }
