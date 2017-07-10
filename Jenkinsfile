@@ -21,7 +21,7 @@ node ('master') {
     }
     stage ('Deploy to K8S') {
       sh_out("""
-      appNames=\$(find \$(pwd) -type f -name \*-deployment.yaml | xargs -I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)
+      appNames=\$(find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty awk '{if(/app:/) print \$2}' < "{}" ;)
       for appName in \${appNames};
       do
         ./kubectl apply -f \${appName}-service.yaml --kubeconfig=\$(pwd)/kconfig
@@ -35,8 +35,8 @@ node ('master') {
       """)
       sh(script: """
       #!/bin/bash
-      find \$(pwd) -type f -name \*-deployment.yaml | xargs -I {} --no-run-if-empty kubectl apply -f {} --kubeconfig=\$(pwd)/kconfig;
-      """, returnStatus: false, returnStdout: false)
+      find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty kubectl apply -f {} --kubeconfig=\$(pwd)/kconfig;
+      """)
     }
   }
 }
