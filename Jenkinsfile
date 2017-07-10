@@ -5,9 +5,11 @@ def sh_out(cmd){
 node ('master') {
   withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'k8s-aws-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
     stage ('Prepare') {
+      sh_out("""
       git reset --hard
       git clean -fxd
-      git tag -d $(git tag) &> /dev/null
+      git tag -d \$(git tag) &> /dev/null
+      """)
       checkout scm
       gitcommit_email = sh_out('git --no-pager show -s --format=\'%ae\'')
       currentBuild.displayName = "#${BUILD_NUMBER} ${gitcommit_email}"
