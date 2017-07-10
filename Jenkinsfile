@@ -43,5 +43,5 @@ node ('master') {
       find \$(pwd) -type f -name "*-deployment.yaml" | xargs -I {} --no-run-if-empty kubectl apply -f {} --kubeconfig=\$(pwd)/kconfig;
       """)*/
     }
-  }
+  
 }
